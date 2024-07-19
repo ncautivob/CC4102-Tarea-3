@@ -171,10 +171,9 @@ int main() {
   vector<string> film_names = doc2.GetColumn<string>("0");
   int filmnames_length = film_names.size();
 
-  vector<int> m_values = {static_cast<int>(pow(2, 14)),
-                          static_cast<int>(pow(2, 16)),
+  vector<int> m_values = {static_cast<int>(pow(2, 17)),
                           static_cast<int>(pow(2, 18)),
-                          static_cast<int>(pow(2, 20))};
+                          static_cast<int>(pow(2, 19))};
 
   //vector<int> k_values = {1, 4, 8}; // Potencias de 2
 
@@ -189,7 +188,7 @@ int main() {
       // We'll check: search time and error rate (for bloom filter).
       for(int N : N_values) {
 
-        vector<int> k_values = {m/(2*N), m/N, m*N}; // Pensamos que m/N debería ser el de mejor rendimiento!
+        vector<int> k_values = {(int)ceil((log(2) * m / names_length)), 2*m/names_length}; // Pensamos que m/N debería ser el de mejor rendimiento!
 
         for(int k : k_values){
 
