@@ -58,6 +58,20 @@ void names_to_file(unordered_set<string>& search_names,
   }
 }
 
+// Function that writes all names in a file
+void names_to_file2(unordered_set<string>& search_names,
+                  string& filename) {
+  ofstream file(filename);
+  if (file.is_open()) {
+      for (const auto& name : search_names) {
+          file << name << "\n";
+      }
+      file.close();
+  } else {
+      cerr << "An error ocurred :(.\n";
+  }
+}
+
 void grep_search(vector<string>& names, string& search_file) {
   for(const auto& name : names){
     // we want for this to search every name in search_file in the 'names' vector.
@@ -67,9 +81,9 @@ void grep_search(vector<string>& names, string& search_file) {
 }
 
 // Function that applies bloom filter to a name
-int apply_bloom_filter(string &name, vector<int> &M, vector <function<uint32_t(string&)>> &h, int k) {
+int apply_bloom_filter(const string &name, vector<int> &M, vector <function<uint32_t(const string&)>> &h, int k) {
   for (int i = 0; i < k; i++){
-    function<uint32_t(string&)> hash = h[i];
+    function<uint32_t(const string&)> hash = h[i];
     int j = (int) hash(name);
     if(M[j] != 1){
       return 0;
@@ -86,7 +100,7 @@ int main() {
   // [unused position, 1, ..., m]
   vector <int> M(m+1, 0);
   // Hashing functions. We want to create k different hashing functions.
-  vector <function<uint32_t(string&)>> h(k);
+  vector <function<uint32_t(const string&)>> h(k);
 
   // Create k different hash functions
   for (int i=0; i<k; ++i) {
@@ -228,7 +242,7 @@ int main() {
       unordered_set <string> search_after;
 
       // Let's check for the search names first! They should all pass...
-      for (string &name : search_names) {
+      for (const string &name : search_names) {
           int check = apply_bloom_filter(name, M, h, k);
           if(!check){
             // The name did not pass the bloom filter, everything ok.
@@ -241,7 +255,7 @@ int main() {
           }
       }
       // Now for the film names
-      for (string &name : search_filmnames) {
+      for (const string &name : search_filmnames) {
           int check = apply_bloom_filter(name, M, h, k);
           if(!check){
             // The name did not pass the bloom filter, everything ok.
@@ -258,54 +272,26 @@ int main() {
 
       int after_size = search_after.size();
       int collisions = after_size - (N*p); // we substract the amount of baby names in N.
-      // FALTA: Agregarlos a un archivo
-      // Hacer que el grep retorne un 1 si es que sí estaba, un 0 si no
-      // Tener un contador
-      // Sacar porcentaje de error considerando collisions.
 
-      // TAMBIÉN arreglar los errores de arriba?
+      string after_terms_file = "after_terms.txt";
+      names_to_file2(search_after, after_terms_file);
 
+      // Search each name with grep
+      grep_search(names, after_terms_file);
 
       auto stop = high_resolution_clock::now();
       auto duration = duration_cast<milliseconds>(stop - start);
 
+      int error = collisions*100 / (N*(1-p));
+
       cout << "Tiempo de ejecución de búsquedas con el filtro de bloom (ms): "
             << to_string(duration.count()) << '\n'
-            << "Porcentaje de error: "
-            << to_string(duration.count()) << '\n'; // arreglar esto
+            << "Porcentaje de error del filtro: "
+            << to_string(error) << '\n';
 
       cout.rdbuf(originalStdout);
 
-
     }};
-  // To know whether a name is already used or not in O(1).
-  // 0 := it's NOT used, 1 := it's already used.
-
-  // We can use size() method because at this point that vector is already initialized.
-  // vector <int> used_names(names.size(), 0);
-
-  // int inserted = 0;
-  // while (inserted < search_size) {
-  //   int random_index = rand() % names.size();
-  //   if (used_names[random_index]) continue;
-
-  //   // Indicates if the current name passed Bloom's filter.
-  //   bool pass = true;
-
-  //   for (int i = 0; i < k; i++) {
-  //     // If one of the hashing results is zero, this string is not in the database.
-  //     if (!h[i](names[random_index])) {
-  //       pass = false;
-  //       break;
-  //     }
-  //   }
-
-  //   if (pass) {
-  //     search_names[inserted] = names[random_index];
-  //     used_names[random_index] = 1;
-  //     inserted++;
-  //   }
-  // }
 
   return 0;
 }
