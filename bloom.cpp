@@ -11,6 +11,25 @@
 using namespace std;
 using namespace std::chrono;
 
+// HOLI
+// INSTRUCCIONES POR SI LEEN ESTO
+/**
+ * Primero: tengo un poco la escoba con los archivos de los resultados
+ * No sé por qué no se imprime el primer mensaje xd pero bueno
+ * 
+ * Tengo comentada una línea del grep search, (alrededor de la 226)
+ * Hay que devolverla a como estaba para ver que eso funque
+ * Actualmente el error es que se queda pegado y no cacho por qué
+ * Pero es en algún lado de la parte del bloom filter XD hay que poner prints
+ * 
+ * Finalmente, recordar el comando que usamos la otra vez para debuggear
+ * g++ -Wall -O2 -fsanitize=address bloom.cpp MurmurHash3.cpp -o bloom
+ *
+ * y recuerden usar WSL yay 
+*/
+
+
+
 // Applies the murmur hash to the word using a specific seed.
 uint32_t murmur_hash(const string& word, uint32_t seed) {
     uint32_t hash;
@@ -82,10 +101,10 @@ void grep_search(vector<string>& names, string& search_file) {
 }
 
 // Function that applies bloom filter to a name
-int apply_bloom_filter(const string &name, vector<int> &M, vector <function<uint32_t(const string&)>> &h, int k) {
+int apply_bloom_filter(const string &name, vector<int> &M, vector <function<uint32_t(const string&)>> &h, int k, int m) {
   for (int i = 0; i < k; i++){
     function<uint32_t(const string&)> hash = h[i];
-    int j = (int) hash(name);
+    int j = (int) (h[i](name) % m) + 1;
     if(M[j] != 1){
       return 0;
     }
@@ -197,29 +216,31 @@ int main() {
       /** Si existe, añadimos más contenidos. */
       if (existsFile(currentFileName)) {
         outputFile.open(currentFileName, ios_base::app);
-        cout << "Número de nombresa: " << to_string(N)
-            << ", Proporción de palabras en csv: " << to_string(p)
-            << "\n";
       } else {
         outputFile.open(currentFileName);
-        cout << "Número de nombres: " << to_string(N)
-            << ", Proporción de palabras en csv: " << to_string(p)
-            << "\n";
       }
 
-      // Let's now count!
-      auto start = high_resolution_clock::now();
+      if (outputFile.is_open()) {
+        streambuf *originalStdout = cout.rdbuf(outputFile.rdbuf());
+        cout << "Número de nombres: " << to_string(N)
+        << ", Proporción de palabras en csv: " << to_string(p)
+        << "\n";
 
-      // Search each name with grep
-      //grep_search(names, search_terms_file);
+        // Let's now count!
+        auto start = high_resolution_clock::now();
 
-      auto stop = high_resolution_clock::now();
-      auto duration = duration_cast<milliseconds>(stop - start);
+        // Search each name with grep
+        //grep_search(names, search_terms_file);
 
-      cout << "[Tiempo de ejecución de búsquedas con grep (ms): "
-            << to_string(duration.count()) << '\n';
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop - start);
 
-      cout.rdbuf(originalStdout);
+        cout << "Tiempo de ejecución de búsquedas con grep (ms): "
+              << to_string(duration.count()) << '\n';
+
+        cout.rdbuf(originalStdout);
+        outputFile.close();
+      }
 
       // We will now perform the search and check the execution times!
       string currentFileName2 =
@@ -230,13 +251,17 @@ int main() {
 
       /** Si existe, añadimos más contenidos. */
       if (existsFile(currentFileName2)) {
-        outputFile.open(currentFileName, ios_base::app);
+        outputFile.open(currentFileName2, ios_base::app);
       } else {
         outputFile2.open(currentFileName2);
-        cout << "Número de nombres: " << to_string(N)
-            << ", Proporción de palabras en csv: " << to_string(p)
-            << "\n";
       }
+
+      if (outputFile2.is_open()) {
+        streambuf *originalStdout2 = cout.rdbuf(outputFile2.rdbuf());
+        cout << "Número de nombres: " << to_string(N)
+        << ", Proporción de palabras en csv: " << to_string(p)
+        << "\n";
+
 
       // Let's now count!
       auto start2 = high_resolution_clock::now();
@@ -247,7 +272,7 @@ int main() {
 
       // Let's check for the search names first! They should all pass...
       for (const string &name : search_names) {
-          int check = apply_bloom_filter(name, M, h, k);
+          int check = apply_bloom_filter(name, M, h, k, m);
           if(!check){
             // The name did not pass the bloom filter, everything ok.
             continue;
@@ -260,7 +285,7 @@ int main() {
       }
       // Now for the film names
       for (const string &name : search_filmnames) {
-          int check = apply_bloom_filter(name, M, h, k);
+          int check = apply_bloom_filter(name, M, h, k, m);
           if(!check){
             // The name did not pass the bloom filter, everything ok.
             continue;
@@ -294,7 +319,8 @@ int main() {
             << to_string(error) << '\n';
 
       cout.rdbuf(originalStdout2);
-
+      outputFile2.close();
+      }
     }};
 
   return 0;
