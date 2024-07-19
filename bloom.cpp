@@ -61,7 +61,7 @@ bool existsFile(const string &name) {
 
 // Function that writes all names in a file
 void names_to_file(unordered_set<string>& search_names,
-                  unordered_set<string>& search_filmnames,
+                  unordered_multiset<string>& search_filmnames,
                   string& filename) {
   ofstream file(filename);
   if (file.is_open()) {
@@ -91,13 +91,47 @@ void names_to_file2(unordered_set<string>& search_names,
   }
 }
 
-void grep_search(vector<string>& names, string& search_file) {
-  for(const auto& name : names){
-    // we want for this to search every name in search_file in the 'names' vector.
-    //string command = "grep -F -f " + search_file + " <<< \"" + name + "\"";
-    string command = "grep -F -f " + search_file + " -e \"" + name + "\"";
-    system(command.c_str());
+// Function that writes all names in a file
+void names_to_file3(vector<string>& names,
+                  string& filename) {
+  ofstream file(filename);
+  if (file.is_open()) {
+      for (const auto& name : names) {
+          file << name << "\n";
+      }
+      file.close();
+  } else {
+      cerr << "An error ocurred :(.\n";
   }
+}
+
+// Function that applies the grep search!
+void grep_search(string &names_file, string &search_file) {
+  // ifstream infile(s_file);
+  // string term;
+  
+  // while (getline(infile, term)) {
+  //   for (const auto& name: names) {
+  //     if (name==term) {
+  //       cout << "Encontrado: " << name << " con el término: " << term << endl;
+  //     }
+  //   }
+  // }
+
+  // Paso 1: Ejecutar el comando grep
+  string command = "grep -F -x -f " + search_file + " " + names_file + " > grep_results.txt";
+  system(command.c_str());
+
+  // Paso 2: Leer los resultados de grep
+  ifstream grep_results("grep_results.txt");
+  string result;
+  while (getline(grep_results, result)) {
+      cout << "Encontrado: " << result << endl;
+  }
+  grep_results.close();
+
+  // Limpiar archivo temporal
+  std::remove("grep_results.txt");
 }
 
 // Function that applies bloom filter to a name
@@ -133,6 +167,9 @@ int main() {
   // all of the names:
   vector<string> names = doc.GetColumn<string>("Name");
   int names_length = names.size();
+
+  string names_terms_file = "name_file.txt";
+  names_to_file3(names, names_terms_file);
 
   rapidcsv::Document doc2("csv/Film-Names.csv");
 
@@ -174,10 +211,10 @@ int main() {
       // Unordered set that represents the strings from 'names' that we will search.
       unordered_set <string> search_names;
 
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<> dis_names(0, names_length);
-        uniform_int_distribution<> dis_filmnames(0, filmnames_length);
+      random_device rd;
+      mt19937 gen(rd());
+      uniform_int_distribution<> dis_names(0, names_length);
+      uniform_int_distribution<> dis_filmnames(0, filmnames_length);
 
       while(search_names.size() < N*p){
         // Choose a random number between 0 and names_length-1
@@ -187,7 +224,7 @@ int main() {
       }
 
       // Unordered set that represents the strings from 'film names' that we will search.
-      unordered_set <string> search_filmnames;
+      unordered_multiset <string> search_filmnames;
 
       while(search_filmnames.size() < N*(1.0-p)){
         int random_number = dis_filmnames(gen);
@@ -229,7 +266,7 @@ int main() {
         auto start = high_resolution_clock::now();
 
         // Search each name with grep
-        //grep_search(names, search_terms_file);
+        grep_search(names_terms_file, search_terms_file);
 
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop - start);
@@ -268,31 +305,31 @@ int main() {
       unordered_set <string> search_after;
 
       // Let's check for the search names first! They should all pass...
-      // for (const string &name : search_names) {
-      //     int check = apply_bloom_filter(name, M, h, k, m);
-      //     if(!check){
-      //       // The name did not pass the bloom filter, everything ok.
-      //       continue;
-      //     }
-      //     else{
-      //       // The name passed the bloom filter!
-      //       // We will add it to a list of names we will then search in the actual file.
-      //       search_after.insert(name);
-      //     }
-      // }
+      for (const string &name : search_names) {
+          int check = apply_bloom_filter(name, M, h, k, m);
+          if(!check){
+            // The name did not pass the bloom filter, everything ok.
+            continue;
+          }
+          else{
+            // The name passed the bloom filter!
+            // We will add it to a list of names we will then search in the actual file.
+            search_after.insert(name);
+          }
+      }
       // Now for the film names
-      // for (const string &name : search_filmnames) {
-      //     int check = apply_bloom_filter(name, M, h, k, m);
-      //     if(!check){
-      //       // The name did not pass the bloom filter, everything ok.
-      //       continue;
-      //     }
-      //     else{
-      //       // The name passed the bloom filter!
-      //       // We will add it to a list of names we will then search in the actual file.
-      //       search_after.insert(name);
-      //     }
-      // }
+      for (const string &name : search_filmnames) {
+          int check = apply_bloom_filter(name, M, h, k, m);
+          if(!check){
+            // The name did not pass the bloom filter, everything ok.
+            continue;
+          }
+          else{
+            // The name passed the bloom filter!
+            // We will add it to a list of names we will then search in the actual file.
+            search_after.insert(name);
+          }
+      }
 
       // Let's now put the search_after names in a file, so we can do a grep search on them afterwards.
 
@@ -303,7 +340,7 @@ int main() {
       names_to_file2(search_after, after_terms_file);
 
       // Search each name with grep
-      //grep_search(names, after_terms_file);
+      grep_search(names_terms_file, after_terms_file);
 
       auto stop2 = high_resolution_clock::now();
       auto duration2 = duration_cast<milliseconds>(stop2 - start2);
