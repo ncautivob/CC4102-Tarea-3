@@ -349,19 +349,28 @@ int main() {
       int after_size = search_after.size();
       int collisions = after_size - (N*p); // we substract the amount of baby names in N.
 
-      string after_terms_file = "after_terms.txt";
-      names_to_file2(search_after, after_terms_file);
-
-      // Search each name with grep
-      grep_search(names_terms_file, after_terms_file);
+      // To be fair (cause we didn't count this for grep), we will stop time right here
+      // And count it again after we pass the elements to the txt :)
 
       auto stop2 = high_resolution_clock::now();
       auto duration2 = duration_cast<milliseconds>(stop2 - start2);
 
+      string after_terms_file = "after_terms.txt";
+      names_to_file2(search_after, after_terms_file);
+
+      // we start again!
+      auto start3 = high_resolution_clock::now();
+
+      // Search each name with grep
+      grep_search(names_terms_file, after_terms_file);
+
+      auto stop3 = high_resolution_clock::now();
+      auto duration3 = duration_cast<milliseconds>(stop3 - start3);
+
       double error = (collisions*100) / (N*(1.0-p));
 
       cout << "Tiempo de ejecución de búsquedas con el filtro de bloom (ms): "
-            << to_string(duration2.count()) << '\n'
+            << to_string(duration2.count() + duration3.count()) << '\n'
             << "Porcentaje de error del filtro: "
             << to_string(error) << '\n'
             << "Número de colisiones: "
