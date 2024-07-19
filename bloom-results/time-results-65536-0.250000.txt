@@ -1,36 +1,36 @@
 Tamaño de M: 131072
 Tamaño de k: 1
 Número de nombres: 65536, Proporción de palabras en csv: 0.250000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 191
-Porcentaje de error del filtro: 51.198324
-Número de colisiones: 25165
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 150
+Porcentaje de error del filtro: 51.599121
+Número de colisiones: 25362
 Tamaño de M: 131072
 Tamaño de k: 2
 Número de nombres: 65536, Proporción de palabras en csv: 0.250000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 191
-Porcentaje de error del filtro: 57.751465
-Número de colisiones: 28386
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 194
+Porcentaje de error del filtro: 57.446289
+Número de colisiones: 28236
 Tamaño de M: 262144
 Tamaño de k: 2
 Número de nombres: 65536, Proporción de palabras en csv: 0.250000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 158
-Porcentaje de error del filtro: 25.821940
-Número de colisiones: 12692
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 156
+Porcentaje de error del filtro: 26.116943
+Número de colisiones: 12837
 Tamaño de M: 262144
-Tamaño de k: 5
+Tamaño de k: 4
 Número de nombres: 65536, Proporción de palabras en csv: 0.250000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 229
-Porcentaje de error del filtro: 40.075684
-Número de colisiones: 19698
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 192
+Porcentaje de error del filtro: 34.145101
+Número de colisiones: 16783
 Tamaño de M: 524288
 Tamaño de k: 4
 Número de nombres: 65536, Proporción de palabras en csv: 0.250000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 159
-Porcentaje de error del filtro: 7.763672
-Número de colisiones: 3816
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 190
+Porcentaje de error del filtro: 7.786051
+Número de colisiones: 3827
 Tamaño de M: 524288
-Tamaño de k: 11
+Tamaño de k: 10
 Número de nombres: 65536, Proporción de palabras en csv: 0.250000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 301
-Porcentaje de error del filtro: 20.123291
-Número de colisiones: 9891
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 272
+Porcentaje de error del filtro: 17.431641
+Número de colisiones: 8568

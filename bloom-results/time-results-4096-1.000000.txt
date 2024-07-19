@@ -1,23 +1,23 @@
 Tamaño de M: 131072
 Tamaño de k: 1
 Número de nombres: 4096, Proporción de palabras en csv: 1.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 53
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 43
 Porcentaje de error del filtro: -nan
 Número de colisiones: 0
 Tamaño de M: 131072
 Tamaño de k: 2
 Número de nombres: 4096, Proporción de palabras en csv: 1.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 50
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 55
 Porcentaje de error del filtro: -nan
 Número de colisiones: 0
 Tamaño de M: 262144
 Tamaño de k: 2
 Número de nombres: 4096, Proporción de palabras en csv: 1.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 42
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 41
 Porcentaje de error del filtro: -nan
 Número de colisiones: 0
 Tamaño de M: 262144
-Tamaño de k: 5
+Tamaño de k: 4
 Número de nombres: 4096, Proporción de palabras en csv: 1.000000
 Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 45
 Porcentaje de error del filtro: -nan
@@ -25,12 +25,12 @@ Número de colisiones: 0
 Tamaño de M: 524288
 Tamaño de k: 4
 Número de nombres: 4096, Proporción de palabras en csv: 1.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 49
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 44
 Porcentaje de error del filtro: -nan
 Número de colisiones: 0
 Tamaño de M: 524288
-Tamaño de k: 11
+Tamaño de k: 10
 Número de nombres: 4096, Proporción de palabras en csv: 1.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 58
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 60
 Porcentaje de error del filtro: -nan
 Número de colisiones: 0

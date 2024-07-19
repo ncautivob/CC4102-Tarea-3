@@ -1,36 +1,36 @@
 Tamaño de M: 131072
 Tamaño de k: 1
 Número de nombres: 1024, Proporción de palabras en csv: 0.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 24
-Porcentaje de error del filtro: 51.757812
-Número de colisiones: 530
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 22
+Porcentaje de error del filtro: 54.687500
+Número de colisiones: 560
 Tamaño de M: 131072
 Tamaño de k: 2
 Número de nombres: 1024, Proporción de palabras en csv: 0.000000
 Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 26
-Porcentaje de error del filtro: 57.519531
-Número de colisiones: 589
+Porcentaje de error del filtro: 58.398438
+Número de colisiones: 598
 Tamaño de M: 262144
 Tamaño de k: 2
 Número de nombres: 1024, Proporción de palabras en csv: 0.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 22
-Porcentaje de error del filtro: 26.660156
-Número de colisiones: 273
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 25
+Porcentaje de error del filtro: 29.296875
+Número de colisiones: 300
 Tamaño de M: 262144
-Tamaño de k: 5
+Tamaño de k: 4
 Número de nombres: 1024, Proporción de palabras en csv: 0.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 24
-Porcentaje de error del filtro: 40.625000
-Número de colisiones: 416
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 29
+Porcentaje de error del filtro: 37.304688
+Número de colisiones: 382
 Tamaño de M: 524288
 Tamaño de k: 4
 Número de nombres: 1024, Proporción de palabras en csv: 0.000000
-Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 21
-Porcentaje de error del filtro: 8.398438
-Número de colisiones: 86
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 25
+Porcentaje de error del filtro: 8.496094
+Número de colisiones: 87
 Tamaño de M: 524288
-Tamaño de k: 11
+Tamaño de k: 10
 Número de nombres: 1024, Proporción de palabras en csv: 0.000000
 Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 23
-Porcentaje de error del filtro: 20.800781
-Número de colisiones: 213
+Porcentaje de error del filtro: 16.796875
+Número de colisiones: 172

@@ -1,24 +1,24 @@
 Tamaño de M: 131072
 Tamaño de k: 1
 Número de nombres: 16384, Proporción de palabras en csv: 0.500000
-Tiempo de ejecución de búsquedas con grep (ms): 76
+Tiempo de ejecución de búsquedas con grep (ms): 72
 Tamaño de M: 131072
 Tamaño de k: 2
 Número de nombres: 16384, Proporción de palabras en csv: 0.500000
-Tiempo de ejecución de búsquedas con grep (ms): 78
+Tiempo de ejecución de búsquedas con grep (ms): 82
 Tamaño de M: 262144
 Tamaño de k: 2
 Número de nombres: 16384, Proporción de palabras en csv: 0.500000
-Tiempo de ejecución de búsquedas con grep (ms): 69
+Tiempo de ejecución de búsquedas con grep (ms): 72
 Tamaño de M: 262144
-Tamaño de k: 5
+Tamaño de k: 4
 Número de nombres: 16384, Proporción de palabras en csv: 0.500000
-Tiempo de ejecución de búsquedas con grep (ms): 74
+Tiempo de ejecución de búsquedas con grep (ms): 75
 Tamaño de M: 524288
 Tamaño de k: 4
 Número de nombres: 16384, Proporción de palabras en csv: 0.500000
-Tiempo de ejecución de búsquedas con grep (ms): 85
+Tiempo de ejecución de búsquedas con grep (ms): 77
 Tamaño de M: 524288
-Tamaño de k: 11
+Tamaño de k: 10
 Número de nombres: 16384, Proporción de palabras en csv: 0.500000
-Tiempo de ejecución de búsquedas con grep (ms): 73
+Tiempo de ejecución de búsquedas con grep (ms): 102
