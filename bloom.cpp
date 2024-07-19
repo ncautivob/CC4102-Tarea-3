@@ -75,7 +75,8 @@ void names_to_file2(unordered_set<string>& search_names,
 void grep_search(vector<string>& names, string& search_file) {
   for(const auto& name : names){
     // we want for this to search every name in search_file in the 'names' vector.
-    string command = "grep -F -f " + search_file + " <<< \"" + name + "\"";
+    //string command = "grep -F -f " + search_file + " <<< \"" + name + "\"";
+    string command = "grep -F -f " + search_file + " -e \"" + name + "\"";
     system(command.c_str());
   }
 }
@@ -196,6 +197,9 @@ int main() {
       /** Si existe, añadimos más contenidos. */
       if (existsFile(currentFileName)) {
         outputFile.open(currentFileName, ios_base::app);
+        cout << "Número de nombresa: " << to_string(N)
+            << ", Proporción de palabras en csv: " << to_string(p)
+            << "\n";
       } else {
         outputFile.open(currentFileName);
         cout << "Número de nombres: " << to_string(N)
@@ -207,7 +211,7 @@ int main() {
       auto start = high_resolution_clock::now();
 
       // Search each name with grep
-      grep_search(names, search_terms_file);
+      //grep_search(names, search_terms_file);
 
       auto stop = high_resolution_clock::now();
       auto duration = duration_cast<milliseconds>(stop - start);
@@ -218,24 +222,24 @@ int main() {
       cout.rdbuf(originalStdout);
 
       // We will now perform the search and check the execution times!
-      string currentFileName =
+      string currentFileName2 =
           "bloom-results/time-results-" + to_string(N) + "-" + to_string(p) + ".txt";
 
-      ofstream outputFile;
-      streambuf *originalStdout = cout.rdbuf(outputFile.rdbuf());
+      ofstream outputFile2;
+      streambuf *originalStdout2 = cout.rdbuf(outputFile2.rdbuf());
 
       /** Si existe, añadimos más contenidos. */
-      if (existsFile(currentFileName)) {
+      if (existsFile(currentFileName2)) {
         outputFile.open(currentFileName, ios_base::app);
       } else {
-        outputFile.open(currentFileName);
+        outputFile2.open(currentFileName2);
         cout << "Número de nombres: " << to_string(N)
             << ", Proporción de palabras en csv: " << to_string(p)
             << "\n";
       }
 
       // Let's now count!
-      auto start = high_resolution_clock::now();
+      auto start2 = high_resolution_clock::now();
 
       // Search each name with the bloom filter
 
@@ -279,17 +283,17 @@ int main() {
       // Search each name with grep
       grep_search(names, after_terms_file);
 
-      auto stop = high_resolution_clock::now();
-      auto duration = duration_cast<milliseconds>(stop - start);
+      auto stop2 = high_resolution_clock::now();
+      auto duration2 = duration_cast<milliseconds>(stop2 - start2);
 
       int error = collisions*100 / (N*(1-p));
 
       cout << "Tiempo de ejecución de búsquedas con el filtro de bloom (ms): "
-            << to_string(duration.count()) << '\n'
+            << to_string(duration2.count()) << '\n'
             << "Porcentaje de error del filtro: "
             << to_string(error) << '\n';
 
-      cout.rdbuf(originalStdout);
+      cout.rdbuf(originalStdout2);
 
     }};
 
