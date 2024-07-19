@@ -188,7 +188,7 @@ int main() {
       // We'll check: search time and error rate (for bloom filter).
       for(int N : N_values) {
 
-        vector<int> k_values = {(int)ceil((log(2) * m / names_length)), 2*m/names_length}; // Pensamos que m/N debería ser el de mejor rendimiento!
+        vector<int> k_values = {(int)ceil((log(2) * m / names_length)), 2*(int)ceil(m / names_length)}; // Pensamos que m/N debería ser el de mejor rendimiento!
 
         for(int k : k_values){
 
