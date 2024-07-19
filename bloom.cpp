@@ -222,10 +222,8 @@ int main() {
       if (outputFile.is_open()) {
         streambuf *originalStdout = cout.rdbuf(outputFile.rdbuf());
 
-        cout << "Número de nombres: " << endl;
-        // << to_string(N)
-        // << ", Proporción de palabras en csv: " << to_string(p)
-        // << "\n";
+        cout << "Número de nombres: " << to_string(N)
+        << ", Proporción de palabras en csv: " << to_string(p) << "\n";
 
         // Let's now count!
         auto start = high_resolution_clock::now();
