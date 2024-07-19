@@ -1,0 +1,36 @@
+Tamaño de M: 131072
+Tamaño de k: 1
+Número de nombres: 4096, Proporción de palabras en csv: 0.250000
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 40
+Porcentaje de error del filtro: 52.148438
+Número de colisiones: 1602
+Tamaño de M: 131072
+Tamaño de k: 2
+Número de nombres: 4096, Proporción de palabras en csv: 0.250000
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 38
+Porcentaje de error del filtro: 58.007812
+Número de colisiones: 1782
+Tamaño de M: 262144
+Tamaño de k: 2
+Número de nombres: 4096, Proporción de palabras en csv: 0.250000
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 31
+Porcentaje de error del filtro: 25.130208
+Número de colisiones: 772
+Tamaño de M: 262144
+Tamaño de k: 5
+Número de nombres: 4096, Proporción de palabras en csv: 0.250000
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 35
+Porcentaje de error del filtro: 41.471354
+Número de colisiones: 1274
+Tamaño de M: 524288
+Tamaño de k: 4
+Número de nombres: 4096, Proporción de palabras en csv: 0.250000
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 39
+Porcentaje de error del filtro: 7.747396
+Número de colisiones: 238
+Tamaño de M: 524288
+Tamaño de k: 11
+Número de nombres: 4096, Proporción de palabras en csv: 0.250000
+Tiempo de ejecución de búsquedas con el filtro de bloom (ms): 40
+Porcentaje de error del filtro: 19.498698
+Número de colisiones: 599
