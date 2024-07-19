@@ -121,12 +121,9 @@ void grep_search(string &names_file, string &search_file) {
 
   // We will now read the results from the txt and print them!
   // note: this might be deleted soon, as prints add a lot to the execution time...
-  ifstream grep_results("grep_results.txt");
-  string result;
-  while (getline(grep_results, result)) {
-      cout << "Encontrado: " << result << endl;
-  }
-  grep_results.close();
+  //ifstream grep_results("grep_results.txt");
+  //string result;
+  //grep_results.close();
 
   // We then remove grep results as we don't really need it
   remove("grep_results.txt");
@@ -147,20 +144,14 @@ int apply_bloom_filter(const string &name, vector<int> &M, vector <function<uint
   return 1;
 }
 
-int main() { 
-  int m, k;
-  cin >> m >> k;
+int main() {
+  // We'll delete the directories for the results txt's so the results are not overwritten.
+  // And then create it again
+  deleteDirectory("bloom-results");
+  createDirectory("bloom-results");
 
-  // [unused position, 1, ..., m]
-  vector <int> M(m+1, 0);
-  // Hashing functions. We want to create k different hashing functions.
-  vector <function<uint32_t(const string&)>> h(k);
-
-  // Create k different hash functions
-  // We will use the previous 'create murmur hash function' with a different seed every time
-  for (int i = 0; i < k; i++) {
-      h[i] = create_murmur_hash_function(i + 1); // the using of the index i makes it unique!
-  }
+  deleteDirectory("grep-results");
+  createDirectory("grep-results"); 
 
   // Let's import the strings from the two csv files.
   rapidcsv::Document doc("csv/Popular-Baby-Names-Final.csv");
@@ -180,206 +171,226 @@ int main() {
   vector<string> film_names = doc2.GetColumn<string>("0");
   int filmnames_length = film_names.size();
 
-  // Experimentation:
+  vector<int> m_values = {static_cast<int>(pow(2, 14)),
+                          static_cast<int>(pow(2, 16)),
+                          static_cast<int>(pow(2, 18)),
+                          static_cast<int>(pow(2, 20))};
 
-  // We should apply the bloom filter to insert all baby names
-  // So we have the final 'M' value.
-  // With this M value, we can then do the experimentation.
+  //vector<int> k_values = {1, 4, 8}; // Potencias de 2
 
-  // Insertion using Bloom's filter
-  for (string &S: names) {
-    for (int i = 0; i < k; i++) {
-      uint32_t j = (h[i](S) % m) + 1; // We make sure that the result is between 1 and m.
-      //int j = h[i](S);
-      M[(int)j] = 1; // This casting is ok since j is between 1 and m.
-    }
-  }
+  for(int m: m_values){
+    //for(int k: k_values){
+      vector<int> N_values = {static_cast<int>(pow(2, 10)), static_cast<int>(pow(2, 12)),
+                              static_cast<int>(pow(2, 14)), static_cast<int>(pow(2, 16))};
 
-  for (int q = 1; q < m+1 ; q++){
-    cout << "M[" << q << "] is " << M[q] << endl;
-  }
+      vector<double> p_values = {0.0, 0.25, 0.5, 0.75, 1.0};
 
-  vector<int> N_values = {static_cast<int>(pow(2, 10)), static_cast<int>(pow(2, 12)),
-                          static_cast<int>(pow(2, 14)), static_cast<int>(pow(2, 16))};
+      // We'll do this experiment 20 times.
+      // We'll check: search time and error rate (for bloom filter).
+      for(int N : N_values) {
 
-  vector<double> p_values = {0.0, 0.25, 0.5, 0.75, 1.0};
+        vector<int> k_values = {m/(2*N), m/N, m*N}; // Pensamos que m/N debería ser el de mejor rendimiento!
 
-  // We'll delete the directories for the results txt's so the results are not overwritten.
-  // And then create it again
-  deleteDirectory("bloom-results");
-  createDirectory("bloom-results");
+        for(int k : k_values){
 
-  deleteDirectory("grep-results");
-  createDirectory("grep-results");
+          // [unused position, 1, ..., m]
+          vector <int> M(m+1, 0);
+          // Hashing functions. We want to create k different hashing functions.
+          vector <function<uint32_t(const string&)>> h(k);
 
-  // We'll do this experiment 20 times.
-  // We'll check: search time and error rate (for bloom filter).
-  for(int N : N_values) {
-    for(double p : p_values){
-      // Unordered set that represents the strings from 'names' that we will search.
-      unordered_set <string> search_names;
+          // Create k different hash functions
+          // We will use the previous 'create murmur hash function' with a different seed every time
+          for (int i = 0; i < k; i++) {
+              h[i] = create_murmur_hash_function(i + 1); // the using of the index i makes it unique!
+          }
 
-      random_device rd;
-      mt19937 gen(rd());
-      uniform_int_distribution<> dis_names(0, names_length);
-      uniform_int_distribution<> dis_filmnames(0, filmnames_length);
+          // Experimentation:
 
-      while(search_names.size() < N*p){
-        // Choose a random number between 0 and names_length-1
-        // Then take that name from the 'names' vector and add it to search_names
-        int random_number = dis_names(gen);
-        search_names.insert(names[random_number]);
-      }
+          // We should apply the bloom filter to insert all baby names
+          // So we have the final 'M' value.
+          // With this M value, we can then do the experimentation.
 
-      // Unordered multiset that represents the strings from 'film names' that we will search.
-      // It's a multiset because we don't have enough film names to allow all of them to be different
-      // Considering we will need 2^16 different film names, if we took the other approach
-      unordered_multiset <string> search_filmnames;
+          // Insertion using Bloom's filter
+          for (string &S: names) {
+            for (int i = 0; i < k; i++) {
+              uint32_t j = (h[i](S) % m) + 1; // We make sure that the result is between 1 and m.
+              //int j = h[i](S);
+              M[(int)j] = 1; // This casting is ok since j is between 1 and m.
+            }
+          }
 
-      while(search_filmnames.size() < N*(1.0-p)){
-        int random_number = dis_filmnames(gen); // different distribution due to the different amount
-        search_filmnames.insert(film_names[random_number]);
-      }
+          for(double p : p_values){
+            // Unordered set that represents the strings from 'names' that we will search.
+            unordered_set <string> search_names;
 
-      // Now that we have both sets, we should perform the searches!
+            random_device rd;
+            mt19937 gen(rd());
+            uniform_int_distribution<> dis_names(0, names_length);
+            uniform_int_distribution<> dis_filmnames(0, filmnames_length);
 
-      // First, without Bloom Filter:
-      // To perform a 'grep' process without any issue,
-      // we put all 'search names' in a file.
-      // (it is also important to notice that we don't need the output,
-      // just the final time of execution)
+            while(search_names.size() < N*p){
+              // Choose a random number between 0 and names_length-1
+              // Then take that name from the 'names' vector and add it to search_names
+              int random_number = dis_names(gen);
+              search_names.insert(names[random_number]);
+            }
 
-      // we will do this now:
-      string search_terms_file = "search_terms.txt";
-      names_to_file(search_names, search_filmnames, search_terms_file);
+            // Unordered multiset that represents the strings from 'film names' that we will search.
+            // It's a multiset because we don't have enough film names to allow all of them to be different
+            // Considering we will need 2^16 different film names, if we took the other approach
+            unordered_multiset <string> search_filmnames;
 
-      // Now, let's perform the experiments for the sequential search.
-      string currentFileName =
-          "grep-results/time-results-" + to_string(N) + "-" + to_string(p) + ".txt";
+            while(search_filmnames.size() < N*(1.0-p)){
+              int random_number = dis_filmnames(gen); // different distribution due to the different amount
+              search_filmnames.insert(film_names[random_number]);
+            }
 
-      ofstream outputFile;
+            // Now that we have both sets, we should perform the searches!
 
-      /** Si existe, añadimos más contenidos. */
-      if (existsFile(currentFileName)) {
-        outputFile.open(currentFileName, ios_base::app);
-      } else {
-        outputFile.open(currentFileName);
-      }
+            // First, without Bloom Filter:
+            // To perform a 'grep' process without any issue,
+            // we put all 'search names' in a file.
+            // (it is also important to notice that we don't need the output,
+            // just the final time of execution)
 
-      if (outputFile.is_open()) {
-        streambuf *originalStdout = cout.rdbuf(outputFile.rdbuf());
+            // we will do this now:
+            string search_terms_file = "search_terms.txt";
+            names_to_file(search_names, search_filmnames, search_terms_file);
 
-        cout << "Número de nombres: " << to_string(N)
-        << ", Proporción de palabras en csv: " << to_string(p) << "\n";
+            // Now, let's perform the experiments for the sequential search.
+            string currentFileName =
+                "grep-results/time-results-" + to_string(N) + "-" + to_string(p) + ".txt";
 
-        // Let's now count!
-        auto start = high_resolution_clock::now();
+            ofstream outputFile;
 
-        // Search each name with grep
-        grep_search(names_terms_file, search_terms_file);
+            /** Si existe, añadimos más contenidos. */
+            if (existsFile(currentFileName)) {
+              outputFile.open(currentFileName, ios_base::app);
+            } else {
+              outputFile.open(currentFileName);
+            }
 
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop - start);
+            if (outputFile.is_open()) {
+              streambuf *originalStdout = cout.rdbuf(outputFile.rdbuf());
 
-        cout << "Tiempo de ejecución de búsquedas con grep (ms): "
+              cout << "Tamaño de M: " << to_string(m) << "\n"
+              << "Tamaño de k: " << to_string(k) << "\n"
+              << "Número de nombres: " << to_string(N)
+              << ", Proporción de palabras en csv: " << to_string(p) << "\n";
+
+              // Let's now count!
+              auto start = high_resolution_clock::now();
+
+              // Search each name with grep
+              grep_search(names_terms_file, search_terms_file);
+
+              auto stop = high_resolution_clock::now();
+              auto duration = duration_cast<milliseconds>(stop - start);
+
+              cout <<"Tiempo de ejecución de búsquedas con grep (ms): "
               << to_string(duration.count()) << '\n';
 
-        cout.rdbuf(originalStdout);
-        outputFile.close();
-      }
+              cout.rdbuf(originalStdout);
+              outputFile.close();
+            }
 
-      // We will now perform the bloom filter search and check the execution times!
-      string currentFileName2 =
-          "bloom-results/time-results-" + to_string(N) + "-" + to_string(p) + ".txt";
+            // We will now perform the bloom filter search and check the execution times!
+            string currentFileName2 =
+                "bloom-results/time-results-" + to_string(N) + "-" + to_string(p) + ".txt";
 
-      ofstream outputFile2;
-      /** Si existe, añadimos más contenidos. */
-      if (existsFile(currentFileName2)) {
-        outputFile2.open(currentFileName2, ios_base::app);
-      } else {
-        outputFile2.open(currentFileName2);
-      }
+            ofstream outputFile2;
+            /** Si existe, añadimos más contenidos. */
+            if (existsFile(currentFileName2)) {
+              outputFile2.open(currentFileName2, ios_base::app);
+            } else {
+              outputFile2.open(currentFileName2);
+            }
 
-      if (outputFile2.is_open()) {
-        streambuf *originalStdout2 = cout.rdbuf(outputFile2.rdbuf());
-        cout << "Número de nombres: " << to_string(N)
-        << ", Proporción de palabras en csv: " << to_string(p)
-        << "\n";
+            if (outputFile2.is_open()) {
+              streambuf *originalStdout2 = cout.rdbuf(outputFile2.rdbuf());
+              cout << "Tamaño de M: " << to_string(m) << "\n"
+              << "Tamaño de k: " << to_string(k) << "\n"
+              << "Número de nombres: " << to_string(N)
+              << ", Proporción de palabras en csv: " << to_string(p)
+              << "\n";
 
 
-      // Let's now count!
-      auto start2 = high_resolution_clock::now();
+            // Let's now count!
+            auto start2 = high_resolution_clock::now();
 
-      // Search each name with the bloom filter
+            // Search each name with the bloom filter
 
-      // originally a set... now a multiset to see what happens!
-      unordered_multiset <string> search_after; // MAYBE THE ISSUE IS THAT THIS IS A SET?
+            // originally a set... now a multiset to see what happens!
+            unordered_multiset <string> search_after; // MAYBE THE ISSUE IS THAT THIS IS A SET?
 
-      // Let's check for the search names first! They should all pass...
-      for (const string &name : search_names) {
-          int check = apply_bloom_filter(name, M, h, k, m);
-          if(!check){
-            // The name did not pass the bloom filter, everything ok.
-            // This never actually happens!
-            continue;
+            // Let's check for the search names first! They should all pass...
+            for (const string &name : search_names) {
+                int check = apply_bloom_filter(name, M, h, k, m);
+                if(!check){
+                  // The name did not pass the bloom filter, everything ok.
+                  // This never actually happens!
+                  continue;
+                }
+                else{
+                  // The name passed the bloom filter!
+                  // We will add it to a list of names we will then search in the actual file.
+                  search_after.insert(name);
+                }
+            }
+            // Now for the film names
+            for (const string &name : search_filmnames) {
+                int check = apply_bloom_filter(name, M, h, k, m);
+                if(!check){
+                  // The name did not pass the bloom filter, everything ok.
+                  continue;
+                }
+                else{
+                  // The name passed the bloom filter!
+                  //cout << "COLLISION!! YAY!!" << endl;
+                  // We will add it to a list of names we will then search in the actual file.
+                  search_after.insert(name);
+                }
+            }
+
+            // Let's now put the search_after names in a file, so we can do a grep search on them afterwards.
+
+            int after_size = search_after.size();
+            int collisions = after_size - (N*p); // we substract the amount of baby names in N.
+
+            // To be fair (cause we didn't count this for grep), we will stop time right here
+            // And count it again after we pass the elements to the txt :)
+
+            auto stop2 = high_resolution_clock::now();
+            auto duration2 = duration_cast<milliseconds>(stop2 - start2);
+
+            string after_terms_file = "after_terms.txt";
+            names_to_file2(search_after, after_terms_file);
+
+            // we start again!
+            auto start3 = high_resolution_clock::now();
+
+            // Search each name with grep
+            grep_search(names_terms_file, after_terms_file);
+
+            auto stop3 = high_resolution_clock::now();
+            auto duration3 = duration_cast<milliseconds>(stop3 - start3);
+
+            double error = (collisions*100) / (N*(1.0-p));
+
+            cout << "Tiempo de ejecución de búsquedas con el filtro de bloom (ms): "
+                  << to_string(duration2.count() + duration3.count()) << '\n'
+                  << "Porcentaje de error del filtro: "
+                  << to_string(error) << '\n'
+                  << "Número de colisiones: "
+                  << to_string(collisions) << '\n';
+
+            cout.rdbuf(originalStdout2);
+            outputFile2.close();
+            }
           }
-          else{
-            // The name passed the bloom filter!
-            // We will add it to a list of names we will then search in the actual file.
-            search_after.insert(name);
-          }
-      }
-      // Now for the film names
-      for (const string &name : search_filmnames) {
-          int check = apply_bloom_filter(name, M, h, k, m);
-          if(!check){
-            // The name did not pass the bloom filter, everything ok.
-            continue;
-          }
-          else{
-            // The name passed the bloom filter!
-            cout << "COLLISION!! YAY!!" << endl;
-            // We will add it to a list of names we will then search in the actual file.
-            search_after.insert(name);
-          }
-      }
-
-      // Let's now put the search_after names in a file, so we can do a grep search on them afterwards.
-
-      int after_size = search_after.size();
-      int collisions = after_size - (N*p); // we substract the amount of baby names in N.
-
-      // To be fair (cause we didn't count this for grep), we will stop time right here
-      // And count it again after we pass the elements to the txt :)
-
-      auto stop2 = high_resolution_clock::now();
-      auto duration2 = duration_cast<milliseconds>(stop2 - start2);
-
-      string after_terms_file = "after_terms.txt";
-      names_to_file2(search_after, after_terms_file);
-
-      // we start again!
-      auto start3 = high_resolution_clock::now();
-
-      // Search each name with grep
-      grep_search(names_terms_file, after_terms_file);
-
-      auto stop3 = high_resolution_clock::now();
-      auto duration3 = duration_cast<milliseconds>(stop3 - start3);
-
-      double error = (collisions*100) / (N*(1.0-p));
-
-      cout << "Tiempo de ejecución de búsquedas con el filtro de bloom (ms): "
-            << to_string(duration2.count() + duration3.count()) << '\n'
-            << "Porcentaje de error del filtro: "
-            << to_string(error) << '\n'
-            << "Número de colisiones: "
-            << to_string(collisions) << '\n';
-
-      cout.rdbuf(originalStdout2);
-      outputFile2.close();
-      }
-    }};
-
+        }
+      //};
+    }
+  }
   return 0;
 }
