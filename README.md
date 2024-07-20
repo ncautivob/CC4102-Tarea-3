@@ -1,6 +1,6 @@
 # 📚 Tarea 3: CC4102 - Diseño y Análisis de Algoritmos
 
-Filtro de Bloom.
+Diseño y análisis de un algoritmo probabilístico: Filtro de Bloom.
 
 ## 👤 Integrantes (Sección 2): 
 
@@ -20,15 +20,15 @@ En el siguiente repositorio se entregan los siguientes archivos. Todas las imple
 - 📁 $\texttt{/csv/}$ - Contiene los archivos de tipo 'csv' de donde se obtienen los datos para la experimentación. ('Film-Names.csv' y 'Popular-Baby-Names.csv').
 - 📁 $\texttt{/bloom-results/}$ - Contiene los archivos que describen los tiempos de ejecución y número de 'colisiones' de la búsqueda utilizando filtro de Bloom. Entiéndase 'colisiones' como el número de elementos que pasaron el filtro y sabemos que no se encuentran en el 'storage'. Estos contienen los resultados obtenidos para cada combinación de parámetros (N,p) en formato $\texttt{.txt}$, y cada uno tiene las ejecuciones para cada combinación de (m, k).
 - 📁 $\texttt{/grep-results/}$ - Contiene los archivos que describen los tiempos de ejecución de la búsqueda secuencial utilizando el comando 'grep'. Estos contienen los resultados obtenidos para cada combinación de parámetros (N,p) en formato $\texttt{.txt}$, y, si bien cada uno indica ciertas combinaciones de (M, k), en la práctica son ejecuciones repetidas (puesto que esta búsqueda no depende de estos parámetros).
-- 📄 $\texttt{rapidcsv.h}$ - Archivo con encabezados que se utilizan para las funciones de manejo de archivos de tipo 'csv'. Este archivo es importado de https://github.com/d99kris/rapidcsv
+- 📄 $\texttt{rapidcsv.h}$ - Archivo con encabezados que se utilizan para las funciones de manejo de archivos de tipo 'csv'. Este archivo es importado de https://github.com/d99kris/rapidcsv.
 - 📄 $\texttt{MurmurHash3.h}$ - Archivo con encabezados que se utilizan para crear las funciones de hash de tipo 'Murmur'.
 - 📄 $\texttt{MurmurHash3.cpp}$ - Archivo con las funciones asociadas al hashing de tipo 'Murmur'. Estos últimos dos archivos son importados de https://github.com/aappleby/smhasher/tree/master/src.
 - 📄 $\texttt{bloom.cpp}$ - Archivo que contiene la implementación de los algoritmos completos. Contiene diversas funciones auxiliares de manejo de archivos, creación de funciones de hashing, manejo de comando 'grep', aplicación del filtro de bloom y, por supuesto, la función 'main'. Esta última está encargada de la experimentación solicitada en el enunciado, utilizando tanto los parámetros pedidos para (N,p) como algunas selecciones propias para (m,k), y revisando tiempos de ejecución para ambos tipos de búsqueda (+ error para el filtro de Bloom). Deja los resultados en las carpetas 'grep-results' para la búsqueda secuencial, y en 'bloom-results' para Bloom.
 
 La ejecución de este último archivo creará además cuatro archivos $\texttt{.txt}$ distintos, que no se incluyen en este repositorio. Estos son:
-- 📄 $\texttt{after_terms.txt}$ - Archivo que guarda dinámicamente los strings que pasaron el filtro de Bloom tras cada ejecución.
-- 📄 $\texttt{name_file.txt}$ - Archivo que guarda los strings de 'Popular-Baby-Names.csv' en un formato más amigable para su trabajo.
-- 📄 $\texttt{search_terms.txt}$ - Archivo que guarda dinámicamente los strings que pertenecen a la 'secuencia N' mencionada en el enunciado: Aquellos que se someterán a ambas búsquedas para comparar.
+- 📄 $\texttt{after\\_terms.txt}$ - Archivo que guarda dinámicamente los strings que pasaron el filtro de Bloom tras cada ejecución.
+- 📄 $\texttt{name\\_file.txt}$ - Archivo que guarda los strings de 'Popular-Baby-Names.csv' en un formato más amigable para su trabajo.
+- 📄 $\texttt{search\\_terms.txt}$ - Archivo que guarda dinámicamente los strings que pertenecen a la 'secuencia N' mencionada en el enunciado: Aquellos que se someterán a ambas búsquedas para comparar.
 
 
 ## 💻 Ejecución
@@ -46,9 +46,10 @@ En general:
 Para detonar la experimentación, se deben ejecutar los siguientes comandos en $\texttt{bash}$:
 
 `g++ -o bloom bloom.cpp MurmurHash3.cpp`
+
 `./bloom`
 
-El cual ejecuta el $\texttt{main}$ de ese archivo.
+el cual ejecuta el $\texttt{main}$ de ese archivo.
 
 El archivo debería ser considerado como seguro si existe antivirus. Si existe algún problema con el acceso, puede que desactivar temporalmente el antivirus sea una posible solución.
 
@@ -60,7 +61,6 @@ Nota: Es muy importante que tenga instalado 'filesystem', pues de lo contrario, 
 
 Esto pues 'filesystem' puede que no funcione correctamente con otras versiones de C++. Sin embargo, sigue siendo relevante que tenga este módulo instalado.
 
-En nuestro caso, logramos su instalación en Debian12 con el comando:
-sudo apt-get install build-essential gdb gdbserver zip sshfs less default-jre man
+En nuestro caso, logramos su instalación en Debian12 con el comando: `sudo apt-get install build-essential gdb gdbserver zip sshfs less default-jre man`.
 
-Recomendamos fuertemente el uso de algo similar, puesto que en nuestro caso, por ejemplo, el main no puede ejecutarse correctamente en powershell de Windows.
+Recomendamos fuertemente el uso de algo similar, puesto que en nuestro caso, por ejemplo, el main no puede ejecutarse correctamente en PowerShell de Windows.
